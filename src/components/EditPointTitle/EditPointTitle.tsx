@@ -1,0 +1,48 @@
+import React, { useState } from 'react'
+import { Point } from '../PlaceMarkPoint/PlaceMarkPoint'
+
+interface EditPointTitleProps {
+  point: Point
+  updatePointTitle: (id: string, newTitle: string) => void
+  onClose: () => void
+}
+
+export const EditPointTitle: React.FC<EditPointTitleProps> = ({
+  point,
+  updatePointTitle,
+  onClose,
+}) => {
+  const [newTitle, setNewTitle] = useState(point.title)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    updatePointTitle(point.id, newTitle)
+    onClose()
+  }
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: '10px',
+        left: '10px',
+        background: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+      }}
+    >
+      <form onSubmit={handleSubmit}>
+        <input
+          type='text'
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          placeholder='Введите новое название'
+        />
+        <button type='submit'>Сохранить</button>
+        <button type='button' onClick={onClose}>
+          Отмена
+        </button>
+      </form>
+    </div>
+  )
+}
