@@ -1,33 +1,8 @@
 import React from 'react'
 import { Placemark } from 'react-yandex-maps'
+import { IPlaceMarkPointProps } from '../CustomMap/types'
 
-export interface Point {
-  id: string
-  lat: number
-  lon: number
-  title: string
-  address: string
-}
-
-interface PlaceMarkPointProps {
-  locations: Point[]
-  selectedLocation: Point | null
-  setSelectedLocation: (location: Point | null) => void
-  updatePoint: (id: string, lat: number, lon: number) => void
-  editingPoint: string | null
-  setEditingPoint: (id: string | null) => void
-  updatePointTitle: (id: string, newTitle: string) => void
-}
-
-interface PlaceMarkPointProps {
-  locations: Point[]
-  selectedLocation: Point | null
-  setSelectedLocation: (location: Point | null) => void
-  updatePoint: (id: string, lat: number, lon: number) => void
-  setEditingPoint: (id: string | null) => void
-}
-
-export const PlaceMarkPoint: React.FC<PlaceMarkPointProps> = ({
+export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
   locations,
   selectedLocation,
   setSelectedLocation,
