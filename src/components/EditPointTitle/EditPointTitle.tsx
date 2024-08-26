@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Point } from '../PlaceMarkPoint/PlaceMarkPoint'
+import styles from './styles.module.scss'
 
 interface EditPointTitleProps {
   point: Point
@@ -21,16 +22,7 @@ export const EditPointTitle: React.FC<EditPointTitleProps> = ({
   }
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: '10px',
-        left: '10px',
-        background: 'white',
-        padding: '10px',
-        borderRadius: '5px',
-      }}
-    >
+    <div className={styles.title}>
       <form onSubmit={handleSubmit}>
         <input
           type='text'
