@@ -1,0 +1,45 @@
+@import '../../../styles/typography.scss';
+@import '../../../styles/variables.scss';
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+  position: relative;
+
+  @include label;
+}
+
+.input {
+  padding: 10px 20px;
+  width: 100%;
+
+  border: 2px solid #b5b5b5;
+  border-radius: 5px;
+
+  @include input;
+
+  caret-color: $bg-dark;
+  transition: all 0.3s ease;
+
+  &_invalid {
+    border-color: $text-danger;
+  }
+
+  &::placeholder {
+    color: #b5b5b5;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  &:focus {
+    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.05);
+    border-color: $bg-accent;
+  }
+}
+
+.message {
+  padding: 5px 0 0 10px;
+  font-size: 12px;
+  position: absolute;
+  color: $text-danger;
+}

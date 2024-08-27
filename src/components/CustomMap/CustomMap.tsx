@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Map, Polygon, YMaps, ZoomControl } from 'react-yandex-maps'
 import { PlaceMarkPoint } from '../PlaceMarkPoint/PlaceMarkPoint'
 import { EditPointTitle } from '../EditPointTitle/EditPointTitle'
@@ -7,6 +7,8 @@ import { POINTS } from '../../mocks/points'
 import { mapSettings } from './mapSettings'
 import { IPolygon, IPoint, EDrawingMode } from './types'
 import { DrawPolygon } from '../DrawPolygon/DrawPolygon'
+import { Modal } from '../ui/Modal/Modal'
+import { Editor } from './Editor/Editor'
 
 export const CustomMap: React.FC = () => {
   const apikey = import.meta.env.VITE_YANDEX_API_KEY || ''
@@ -18,6 +20,7 @@ export const CustomMap: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<IPoint | null>(null)
   const [editingPoint, setEditingPoint] = useState<string | null>(null)
   const [isShowLoading, setIsShowLoading] = useState(true)
+  const [isOpenEditPoint, setIsOpenEditPoint] = useState(false)
   const [drawingMode, setDrawingMode] = useState<EDrawingMode>(
     EDrawingMode.POINT
   )
@@ -54,7 +57,6 @@ export const CustomMap: React.FC = () => {
   }
 
   const handlePolygonComplete = (coordinates: number[][]) => {
-    console.log('handlePolygonComplete')
     const newPolygon: IPolygon = {
       id: Date.now().toString(),
       coordinates: coordinates,
@@ -80,6 +82,7 @@ export const CustomMap: React.FC = () => {
         >
           Рисовать полигон
         </button>
+        <button onClick={() => setIsOpenEditPoint(true)}>Добавить точку</button>
       </div>
       <YMaps
         query={{ apikey, load: 'package.full' }}
@@ -140,6 +143,15 @@ export const CustomMap: React.FC = () => {
           onClose={() => setEditingPoint(null)}
         />
       )}
+      <Modal isOpen={isOpenEditPoint} onClose={() => setIsOpenEditPoint(false)}>
+        <Editor
+          onSubmit={(data) => {
+            setIsOpenEditPoint(false)
+            setPoints([...points, { ...data, id: Date.now().toString() }])
+          }}
+          onClose={() => setIsOpenEditPoint(false)}
+        />
+      </Modal>
     </div>
   )
 }
