@@ -27,6 +27,7 @@ export interface IPlaceMarkPointProps {
   editingPoint: string | null
   setEditingPoint: (id: string | null) => void
   updatePointTitle: (id: string, newTitle: string) => void
+  deletePoint: (id: string) => void
 }
 
 export enum EDrawingMode {

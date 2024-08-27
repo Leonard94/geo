@@ -25,6 +25,11 @@ export const CustomMap: React.FC = () => {
     EDrawingMode.POINT
   )
 
+  const deletePoint = (id: string) => {
+    setPoints(points.filter((point) => point.id !== id))
+    setSelectedLocation(null)
+  }
+
   const onMapClick = (e: any) => {
     if (drawingMode === 'polygon') {
       return
@@ -116,6 +121,7 @@ export const CustomMap: React.FC = () => {
             editingPoint={editingPoint}
             setEditingPoint={setEditingPoint}
             updatePointTitle={updatePointTitle}
+            deletePoint={deletePoint}
           />
           {drawingMode === 'polygon' && (
             <DrawPolygon

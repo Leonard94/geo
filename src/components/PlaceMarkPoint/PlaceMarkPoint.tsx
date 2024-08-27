@@ -1,6 +1,36 @@
 import React from 'react'
 import { Placemark } from 'react-yandex-maps'
-import { IPlaceMarkPointProps } from '../CustomMap/types'
+import { IPlaceMarkPointProps, IPoint } from '../CustomMap/types'
+
+const createBalloonContent = (location: IPoint) => {
+  const content = []
+  const { id, title, address, comment, objectType, validity } = location
+
+  if (title) {
+    content.push(`<b>${title}</b>`)
+  }
+  if (address) {
+    content.push(`<p>Адрес: ${address}</p>`)
+  }
+  if (comment) {
+    content.push(`<p>Комментарий: ${comment}</p>`)
+  }
+  if (objectType) {
+    content.push(`<p>Тип объекта: ${objectType}</p>`)
+  }
+  if (validity !== undefined) {
+    content.push(
+      `<p>${validity ? 'Информация актуальна' : 'Информация не актуальна'}</p>`
+    )
+  }
+
+  content.push(`
+    <button id="editButton_${id}">Редактировать</button>
+    <button id="deleteButton_${id}">Удалить</button>
+  `)
+
+  return `<div>${content.join('')}</div>`
+}
 
 export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
   locations,
@@ -8,6 +38,7 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
   setSelectedLocation,
   updatePoint,
   setEditingPoint,
+  deletePoint,
 }) => {
   return (
     <>
@@ -31,42 +62,34 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
           }}
         />
       ))} */}
-      {locations.map((item) => {
-        const { title, address, comment, validity } = item
-        const content = `
-          ${title ? `<b>${title}</b><br/>` : ''}
-          ${address ? `${address}<br/>` : ''}
-          ${comment ? `${comment}<br/>` : ''}
-          ${validity ? `${validity ? 'Информация актуальна' : 'Информация не актуальна'}<br/>` : ''}
-        `.trim()
-
-        const finalContent = content.endsWith('<br/>') ? content.slice(0, -5) : content;
+      {locations.map((location) => {
+        const { id, address, lat, lon } = location
 
         return (
           <Placemark
-            key={item.id}
-            geometry={[item.lat, item.lon]}
+            key={id}
+            geometry={[lat, lon]}
             onClick={(e: any) => {
               e.originalEvent.domEvent.originalEvent.stopPropagation()
-              setSelectedLocation(item)
-              setEditingPoint(item.id)
+              setSelectedLocation(location)
+              setEditingPoint(id)
             }}
             onDragEnd={(e: any) => {
               const newCoords = e.originalEvent.target.geometry.getCoordinates()
-              updatePoint(item.id, newCoords[0], newCoords[1])
+              updatePoint(location.id, newCoords[0], newCoords[1])
             }}
             modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
             options={{
               draggable: true,
               preset: 'islands#blueDotIcon',
               iconColor:
-                selectedLocation && selectedLocation.id === item.id
+                selectedLocation && selectedLocation.id === id
                   ? '#33FFCC'
                   : '#1e98ff',
             }}
             properties={{
-              hintContent: item.address,
-              balloonContent: finalContent,
+              hintContent: address,
+              balloonContent: createBalloonContent(location),
             }}
           />
         )
