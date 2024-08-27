@@ -5,7 +5,7 @@ import { EditPointTitle } from '../EditPointTitle/EditPointTitle'
 import styles from './styles.module.scss'
 import { POINTS } from '../../mocks/points'
 import { mapSettings } from './mapSettings'
-import { IPolygon, IPoint, EDrawingMode } from './types'
+import { IPolygon, IPoint, EDrawingMode, EObjectType } from './types'
 import { DrawPolygon } from '../DrawPolygon/DrawPolygon'
 import { Modal } from '../ui/Modal/Modal'
 import { Editor } from './Editor/Editor'
@@ -31,12 +31,16 @@ export const CustomMap: React.FC = () => {
     }
 
     const coords = e.get('coords')
+
     const newPoint: IPoint = {
       id: Date.now().toString(),
       lat: coords[0],
       lon: coords[1],
       title: 'Новая точка',
-      address: 'Адрес будет здесь', // Нужно уметь автоматически устанавливать адресс через геокодер
+      validity: true,
+      address: '', // Нужно уметь автоматически устанавливать адресс через геокодер
+      comment: '',
+      objectType: EObjectType.BPLA,
     }
     setPoints([...points, newPoint])
   }

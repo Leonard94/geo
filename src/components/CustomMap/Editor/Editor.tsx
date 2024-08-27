@@ -5,7 +5,9 @@ import Button from '@mui/material/Button'
 import Switch from '@mui/material/Switch'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Box from '@mui/material/Box'
-import { IPoint } from '../types'
+import { EObjectType, IPoint } from '../types'
+import Select from '@mui/material/Select'
+import { FormControl, InputLabel, MenuItem } from '@mui/material'
 
 type TProps = {
   onSubmit: (data: IPoint) => void
@@ -18,6 +20,7 @@ type FormValues = {
   validity: boolean
   lat: number
   lon: number
+  objectType: EObjectType
 }
 
 export const Editor: React.FC<TProps> = ({ onSubmit, onClose }) => {
@@ -76,8 +79,14 @@ export const Editor: React.FC<TProps> = ({ onSubmit, onClose }) => {
         inputProps={{ step: 'any', min: -90, max: 90 }}
         {...register('lat', {
           required: 'Обязательное поле',
-          min: { value: -90, message: 'Latitude must be between -90 and 90' },
-          max: { value: 90, message: 'Latitude must be between -90 and 90' },
+          min: {
+            value: -90,
+            message: 'Координаты должны быть между -90 и 90',
+          },
+          max: {
+            value: 90,
+            message: 'Координаты должны быть между -90 и 90',
+          },
         })}
         error={!!errors.lat}
         helperText={errors.lat?.message}
@@ -91,21 +100,34 @@ export const Editor: React.FC<TProps> = ({ onSubmit, onClose }) => {
           required: 'Обязательное поле',
           min: {
             value: -180,
-            message: 'Координаты должны быть между -180 and 180',
+            message: 'Координаты должны быть между -180 и 180',
           },
           max: {
             value: 180,
-            message: 'Координаты должны быть между -180 and 180',
+            message: 'Координаты должны быть между -180 и 180',
           },
         })}
         error={!!errors.lon}
         helperText={errors.lon?.message}
       />
-      <Button onClick={onClose} variant='outlined'>
-        Отмена
-      </Button>
+      <FormControl variant="outlined" fullWidth>
+        <InputLabel id="objectType-label">Тип объекта</InputLabel>
+        <Select
+          labelId="objectType-label"
+          label="Тип объекта"
+          {...register('objectType', { required: 'Обязательное поле' })}
+          value={watch('objectType')}
+          onChange={(e) => setValue('objectType', e.target.value as EObjectType)}
+        >
+          <MenuItem value={EObjectType.BPLA}>БПЛА</MenuItem>
+          <MenuItem value={EObjectType.ROCKET}>Ракета</MenuItem>
+        </Select>
+      </FormControl>
       <Button type='submit' variant='contained'>
         Создать
+      </Button>
+      <Button onClick={onClose} variant='outlined'>
+        Отмена
       </Button>
     </Box>
   )

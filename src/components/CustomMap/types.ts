@@ -9,6 +9,14 @@ export interface IPoint {
   lon: number
   title: string
   address: string
+  comment: string
+  validity: boolean
+  objectType: EObjectType
+}
+
+export enum EObjectType {
+  BPLA = 'bpla',
+  ROCKET = 'rocket',
 }
 
 export interface IPlaceMarkPointProps {
