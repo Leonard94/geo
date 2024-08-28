@@ -146,13 +146,13 @@ export const CustomMap: React.FC = () => {
           <ZoomControl options={{ float: 'left' }} />
         </Map>
       </YMaps>
-      {editingPoint && (
+      {/* {editingPoint && (
         <EditPointTitle
           point={points.find((p) => p.id === editingPoint)!}
           updatePointTitle={updatePointTitle}
           onClose={() => setEditingPoint(null)}
         />
-      )}
+      )} */}
       <Modal isOpen={isOpenEditPoint} onClose={() => setIsOpenEditPoint(false)}>
         <Editor
           onSubmit={(data) => {
