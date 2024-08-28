@@ -33,3 +33,29 @@ body {
   padding: 0px;
   background-color: #f1f1f1;
 }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .btn {
+    padding: 5px 10px;
+    border-radius: 3px;
+    color: white;
+    font-size: 10px;
+    transition: all 0.3s ease;
+
+    &_edit {
+      background: rgb(6, 135, 6);
+    }
+
+    &_remove {
+      background: red;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
