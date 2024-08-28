@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import * as XLSX from 'exceljs'
 import { EObjectType } from '../CustomMap/types'
+import { Button } from '@mui/material'
 
 interface Point {
   id: string
@@ -82,18 +83,15 @@ export const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         style={{ display: 'none' }}
         id='excel-file-input'
       />
-      <label
-        htmlFor='excel-file-input'
-        style={{
-          cursor: 'pointer',
-          padding: '10px',
-          backgroundColor: '#f0f0f0',
-          borderRadius: '5px',
-        }}
-      >
-        Выберите Excel файл
+      <label htmlFor='excel-file-input'>
+        <Button variant='contained' component='span'>
+          {fileName ? (
+            <p>Выбранный файл: {fileName}</p>
+          ) : (
+            <p>Выберите Excel файл</p>
+          )}
+        </Button>
       </label>
-      {fileName && <p>Выбранный файл: {fileName}</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   )

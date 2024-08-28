@@ -1,9 +1,35 @@
 @import './reset.scss';
 
+html,
 body {
-  background: green;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'roboto';
 }
 
-.btn {
-  padding: 5px 10px;
+.header {
+  grid-area: header;
+  background-color: #191c1f;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.087);
+
+  padding: 10px 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background-color: #191c1f;
+  padding: 10px;
+  color: white;
+}
+
+.content {
+  grid-area: content;
+  padding: 0px;
+  background-color: #f1f1f1;
 }
