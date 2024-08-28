@@ -55,14 +55,6 @@ export const DrawPolygon: React.FC<DrawPolygonProps> = ({
   )
 
   useEffect(() => {
-    console.log('DrawPolygon useEffect check:', { 
-      ymapsExists: !!ymaps, 
-      mapExists: !!map, 
-      drawingMode,
-      isPolygonMode: drawingMode === EDrawingMode.POLYGON
-    })
-  
-  
     if (!ymaps || !map || drawingMode !== EDrawingMode.POLYGON) {
       return
     }
