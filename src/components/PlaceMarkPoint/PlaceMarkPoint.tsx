@@ -1,15 +1,20 @@
 import React from 'react'
 import { Placemark } from 'react-yandex-maps'
-import { IPlaceMarkPointProps, IPoint } from '../CustomMap/types'
+import { EObjectType, IPlaceMarkPointProps, IPoint } from '../CustomMap/types'
+
+const POINT_COLORS = {
+  [EObjectType.BPLA]: '#e50000',
+  [EObjectType.ROCKET]: '#1f00e5',
+  default: '#1e98ff',
+}
 
 export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
   locations,
-  selectedLocation,
   setSelectedLocation,
   updatePoint,
   setEditingPoint,
   deletePoint,
-  onEdit
+  onEdit,
 }) => {
   const createBalloonContent = (location: IPoint) => {
     const content = []
@@ -64,11 +69,9 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
             modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
             options={{
               draggable: true,
-              preset: 'islands#blueDotIcon',
+              preset: 'islands#circleDotIcon',
               iconColor:
-                selectedLocation && selectedLocation.id === id
-                  ? '#33FFCC'
-                  : '#1e98ff',
+                POINT_COLORS[location.objectType] || POINT_COLORS.default,
             }}
             properties={{
               hintContent: address,
