@@ -69,6 +69,18 @@ export const CustomMap: React.FC = () => {
     setDrawingMode(EDrawingMode.POINT) // Возвращаемся в режим точек после завершения рисования полигона
   }
 
+  const handleCloseModal = () => {
+    setIsOpenEditPoint(false)
+    setEditingPoint(null)
+    setSelectedLocation(null)
+  }
+
+  const handleOpenNewPointModal = () => {
+    setEditingPoint(null)
+    setSelectedLocation(null)
+    setIsOpenEditPoint(true)
+  }
+
   return (
     <div>
       {isShowLoading && <div className={styles.loader}>Loading...</div>}
@@ -86,7 +98,7 @@ export const CustomMap: React.FC = () => {
         >
           Рисовать полигон
         </button>
-        <button onClick={() => setIsOpenEditPoint(true)}>Добавить точку</button>
+        <button onClick={handleOpenNewPointModal}>Добавить точку</button>
       </div>
       <YMaps
         query={{ apikey, load: 'package.full' }}
@@ -141,13 +153,6 @@ export const CustomMap: React.FC = () => {
           <ZoomControl options={{ float: 'left' }} />
         </Map>
       </YMaps>
-      {/* {editingPoint && (
-        <EditPointTitle
-          point={points.find((p) => p.id === editingPoint)!}
-          updatePointTitle={updatePointTitle}
-          onClose={() => setEditingPoint(null)}
-        />
-      )} */}
       <Modal isOpen={isOpenEditPoint} onClose={() => setIsOpenEditPoint(false)}>
         <Editor
           onSubmit={(data) => {
@@ -158,12 +163,11 @@ export const CustomMap: React.FC = () => {
                 )
               )
             } else {
-              setPoints([...points, data])
+              setPoints([...points, { ...data, id: Date.now().toString() }])
             }
-            setIsOpenEditPoint(false)
-            setEditingPoint(null)
+            handleCloseModal()
           }}
-          onClose={() => setIsOpenEditPoint(false)}
+          onClose={handleCloseModal}
           initialData={editingPoint}
         />
       </Modal>

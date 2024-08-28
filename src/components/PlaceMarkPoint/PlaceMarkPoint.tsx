@@ -89,7 +89,6 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
                   }
                   if (editButton) {
                     editButton.addEventListener('click', () => {
-                      console.log('on edit')
                       onEdit(location)
                       ref.balloon.close()
                     })
