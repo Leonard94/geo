@@ -8,6 +8,7 @@ import { IPolygon, IPoint, EDrawingMode, EObjectType } from './types'
 import { DrawPolygon } from '../DrawPolygon/DrawPolygon'
 import { Modal } from '../ui/Modal/Modal'
 import { Editor } from './Editor/Editor'
+import { ExcelUploader } from '../ExcelUploader/ExcelUploader'
 
 export const CustomMap: React.FC = () => {
   const apikey = import.meta.env.VITE_YANDEX_API_KEY || ''
@@ -81,9 +82,14 @@ export const CustomMap: React.FC = () => {
     setIsOpenEditPoint(true)
   }
 
+  const onPointsUpdate = (newPoints: IPoint[]) => {
+    setPoints(newPoints)
+  }
+
   return (
     <div>
       {isShowLoading && <div className={styles.loader}>Loading...</div>}
+      <ExcelUploader onPointsUpdate={onPointsUpdate} />
       <div>
         <button onClick={() => setDrawingMode(EDrawingMode.POINT)}>
           Ставить точки
