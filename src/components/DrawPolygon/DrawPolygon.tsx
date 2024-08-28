@@ -19,7 +19,6 @@ export const DrawPolygon: React.FC<DrawPolygonProps> = ({
 
   const onClick = useCallback(
     (e: any) => {
-      console.log('eeeee')
       const coords = e.get('coords')
       coordinatesRef.current.push(coords)
 
@@ -58,8 +57,6 @@ export const DrawPolygon: React.FC<DrawPolygonProps> = ({
     if (!ymaps || !map || drawingMode !== EDrawingMode.POLYGON) {
       return
     }
-
-    console.log('uraaaa', { ymaps, map, drawingMode })
 
     map.events.add('click', onClick)
     map.events.add('dblclick', onDblClick)
