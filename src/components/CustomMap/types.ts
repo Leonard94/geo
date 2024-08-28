@@ -24,10 +24,10 @@ export interface IPlaceMarkPointProps {
   selectedLocation: IPoint | null
   setSelectedLocation: (location: IPoint | null) => void
   updatePoint: (id: string, lat: number, lon: number) => void
-  editingPoint: string | null
-  setEditingPoint: (id: string | null) => void
-  updatePointTitle: (id: string, newTitle: string) => void
+  editingPoint: IPoint | null
+  setEditingPoint: (point: IPoint | null) => void
   deletePoint: (id: string) => void
+  onEdit: (point: IPoint) => void
 }
 
 export enum EDrawingMode {

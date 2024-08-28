@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Map, Polygon, YMaps, ZoomControl } from 'react-yandex-maps'
 import { PlaceMarkPoint } from '../PlaceMarkPoint/PlaceMarkPoint'
-import { EditPointTitle } from '../EditPointTitle/EditPointTitle'
 import styles from './styles.module.scss'
 import { POINTS } from '../../mocks/points'
 import { mapSettings } from './mapSettings'
@@ -18,7 +17,7 @@ export const CustomMap: React.FC = () => {
   const [points, setPoints] = useState<IPoint[]>(POINTS)
   const [polygons, setPolygons] = useState<IPolygon[]>([])
   const [selectedLocation, setSelectedLocation] = useState<IPoint | null>(null)
-  const [editingPoint, setEditingPoint] = useState<string | null>(null)
+  const [editingPoint, setEditingPoint] = useState<IPoint | null>(null)
   const [isShowLoading, setIsShowLoading] = useState(true)
   const [isOpenEditPoint, setIsOpenEditPoint] = useState(false)
   const [drawingMode, setDrawingMode] = useState<EDrawingMode>(
@@ -56,13 +55,9 @@ export const CustomMap: React.FC = () => {
     )
   }
 
-  const updatePointTitle = (id: string, newTitle: string) => {
-    setPoints(
-      points.map((point) =>
-        point.id === id ? { ...point, title: newTitle } : point
-      )
-    )
-    setEditingPoint(null)
+  const onEdit = (point: IPoint) => {
+    setEditingPoint(point)
+    setIsOpenEditPoint(true)
   }
 
   const handlePolygonComplete = (coordinates: number[][]) => {
@@ -120,8 +115,8 @@ export const CustomMap: React.FC = () => {
             updatePoint={updatePoint}
             editingPoint={editingPoint}
             setEditingPoint={setEditingPoint}
-            updatePointTitle={updatePointTitle}
             deletePoint={deletePoint}
+            onEdit={onEdit}
           />
           {drawingMode === 'polygon' && (
             <DrawPolygon
@@ -156,10 +151,20 @@ export const CustomMap: React.FC = () => {
       <Modal isOpen={isOpenEditPoint} onClose={() => setIsOpenEditPoint(false)}>
         <Editor
           onSubmit={(data) => {
+            if (editingPoint) {
+              setPoints(
+                points.map((p) =>
+                  p.id === editingPoint.id ? { ...p, ...data } : p
+                )
+              )
+            } else {
+              setPoints([...points, data])
+            }
             setIsOpenEditPoint(false)
-            setPoints([...points, { ...data, id: Date.now().toString() }])
+            setEditingPoint(null)
           }}
           onClose={() => setIsOpenEditPoint(false)}
+          initialData={editingPoint}
         />
       </Modal>
     </div>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -12,6 +12,7 @@ import { FormControl, InputLabel, MenuItem } from '@mui/material'
 type TProps = {
   onSubmit: (data: IPoint) => void
   onClose: () => void
+  initialData?: IPoint | null
 }
 
 type FormValues = {
@@ -23,22 +24,37 @@ type FormValues = {
   objectType: EObjectType
 }
 
-export const Editor: React.FC<TProps> = ({ onSubmit, onClose }) => {
+export const Editor: React.FC<TProps> = ({
+  onSubmit,
+  onClose,
+  initialData,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
-      validity: false, // Set default value for the switch
+      validity: false,
+      ...initialData,
     },
   })
 
   const onFormSubmit: SubmitHandler<FormValues> = (data: any) => {
-    onSubmit(data)
+    onSubmit({
+      ...data,
+      id: initialData?.id || Date.now().toString(),
+    })
   }
+
+  useEffect(() => {
+    if (initialData) {
+      reset(initialData)
+    }
+  }, [initialData, reset])
 
   return (
     <Box
@@ -110,21 +126,23 @@ export const Editor: React.FC<TProps> = ({ onSubmit, onClose }) => {
         error={!!errors.lon}
         helperText={errors.lon?.message}
       />
-      <FormControl variant="outlined" fullWidth>
-        <InputLabel id="objectType-label">Тип объекта</InputLabel>
+      <FormControl variant='outlined' fullWidth>
+        <InputLabel id='objectType-label'>Тип объекта</InputLabel>
         <Select
-          labelId="objectType-label"
-          label="Тип объекта"
+          labelId='objectType-label'
+          label='Тип объекта'
           {...register('objectType', { required: 'Обязательное поле' })}
           value={watch('objectType')}
-          onChange={(e) => setValue('objectType', e.target.value as EObjectType)}
+          onChange={(e) =>
+            setValue('objectType', e.target.value as EObjectType)
+          }
         >
           <MenuItem value={EObjectType.BPLA}>БПЛА</MenuItem>
           <MenuItem value={EObjectType.ROCKET}>Ракета</MenuItem>
         </Select>
       </FormControl>
       <Button type='submit' variant='contained'>
-        Создать
+        {initialData ? 'Сохранить' : 'Создать'}
       </Button>
       <Button onClick={onClose} variant='outlined'>
         Отмена

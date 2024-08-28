@@ -9,6 +9,7 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
   updatePoint,
   setEditingPoint,
   deletePoint,
+  onEdit
 }) => {
   const createBalloonContent = (location: IPoint) => {
     const content = []
@@ -54,7 +55,7 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
             onClick={(e: any) => {
               e.originalEvent.domEvent.originalEvent.stopPropagation()
               setSelectedLocation(location)
-              setEditingPoint(id)
+              setEditingPoint(location)
             }}
             onDragEnd={(e: any) => {
               const newCoords = e.originalEvent.target.geometry.getCoordinates()
@@ -88,6 +89,8 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
                   }
                   if (editButton) {
                     editButton.addEventListener('click', () => {
+                      console.log('on edit')
+                      onEdit(location)
                       ref.balloon.close()
                     })
                   }
