@@ -8,7 +8,9 @@ import { IPolygon, IPoint, EDrawingMode, EObjectType } from './types'
 import { DrawPolygon } from '../DrawPolygon/DrawPolygon'
 import { Modal } from '../ui/Modal/Modal'
 import { Editor } from './Editor/Editor'
-import { ExcelUploader } from '../ExcelUploader/ExcelUploader'
+import { Header } from './Header/Header'
+import { Sidebar } from './Sidebar/Sidebar'
+import { Box, CircularProgress } from '@mui/material'
 
 export const CustomMap: React.FC = () => {
   const apikey = import.meta.env.VITE_YANDEX_API_KEY || ''
@@ -67,7 +69,7 @@ export const CustomMap: React.FC = () => {
       coordinates: coordinates,
     }
     setPolygons([...polygons, newPolygon])
-    setDrawingMode(EDrawingMode.POINT) // Возвращаемся в режим точек после завершения рисования полигона
+    setDrawingMode(EDrawingMode.POINT)
   }
 
   const handleCloseModal = () => {
@@ -87,96 +89,105 @@ export const CustomMap: React.FC = () => {
   }
 
   return (
-    <div>
-      {isShowLoading && <div className={styles.loader}>Loading...</div>}
-      <ExcelUploader onPointsUpdate={onPointsUpdate} />
-      <div>
-        <button onClick={() => setDrawingMode(EDrawingMode.POINT)}>
-          Ставить точки
-        </button>
-        <button
-          onClick={() => setDrawingMode(EDrawingMode.POLYGON)}
-          style={{
-            background: `${
-              drawingMode === EDrawingMode.POLYGON ? 'red' : 'green'
-            }`,
-          }}
-        >
-          Рисовать полигон
-        </button>
-        <button onClick={handleOpenNewPointModal}>Добавить точку</button>
-      </div>
-      <YMaps
-        query={{ apikey, load: 'package.full' }}
-        onLoad={(ymapsInstance: any) => {
-          setYmaps(ymapsInstance)
-          setIsShowLoading(false)
-        }}
-      >
-        <Map
-          modules={['multiRouter.MultiRoute']}
-          defaultState={{ center: [55.75, 37.57], zoom: 9 }}
-          onClick={onMapClick}
-          width='100%'
-          height={536}
-          options={mapSettings.options}
-          state={mapSettings.state}
-          onLoad={(mapInstance) => {
-            setMap(mapInstance)
+    <div className={styles.container}>
+      <Header
+        setDrawingMode={setDrawingMode}
+        drawingMode={drawingMode}
+        onPointsUpdate={onPointsUpdate}
+      />
+      <Sidebar
+        onEdit={onEdit}
+        pointsList={points}
+        handleOpenNewPointModal={handleOpenNewPointModal}
+      />
+      <div className={styles.content}>
+        {isShowLoading && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        <YMaps
+          query={{ apikey, load: 'package.full' }}
+          onLoad={(ymapsInstance: any) => {
+            setYmaps(ymapsInstance)
             setIsShowLoading(false)
           }}
         >
-          <PlaceMarkPoint
-            locations={points}
-            selectedLocation={selectedLocation}
-            setSelectedLocation={setSelectedLocation}
-            updatePoint={updatePoint}
-            editingPoint={editingPoint}
-            setEditingPoint={setEditingPoint}
-            deletePoint={deletePoint}
-            onEdit={onEdit}
-          />
-          {drawingMode === 'polygon' && (
-            <DrawPolygon
-              ymaps={ymaps}
-              map={map}
-              onPolygonComplete={handlePolygonComplete}
-              drawingMode={drawingMode}
+          <Map
+            modules={['multiRouter.MultiRoute']}
+            defaultState={{ center: [55.75, 37.57], zoom: 9 }}
+            onClick={onMapClick}
+            width='100%'
+            height='100%'
+            options={mapSettings.options}
+            state={mapSettings.state}
+            onLoad={(mapInstance) => {
+              setMap(mapInstance)
+              setIsShowLoading(false)
+            }}
+          >
+            <PlaceMarkPoint
+              locations={points}
+              selectedLocation={selectedLocation}
+              setSelectedLocation={setSelectedLocation}
+              updatePoint={updatePoint}
+              editingPoint={editingPoint}
+              setEditingPoint={setEditingPoint}
+              deletePoint={deletePoint}
+              onEdit={onEdit}
             />
-          )}
-          {polygons.map((polygon) => (
-            <Polygon
-              key={polygon.id}
-              geometry={[polygon.coordinates]}
-              options={{
-                fillColor: '#00FF00',
-                strokeColor: '#0000FF',
-                opacity: 0.5,
-                strokeWidth: 3,
-              }}
-            />
-          ))}
-          <ZoomControl options={{ float: 'left' }} />
-        </Map>
-      </YMaps>
-      <Modal isOpen={isOpenEditPoint} onClose={() => setIsOpenEditPoint(false)}>
-        <Editor
-          onSubmit={(data) => {
-            if (editingPoint) {
-              setPoints(
-                points.map((p) =>
-                  p.id === editingPoint.id ? { ...p, ...data } : p
+            {drawingMode === 'polygon' && (
+              <DrawPolygon
+                ymaps={ymaps}
+                map={map}
+                onPolygonComplete={handlePolygonComplete}
+                drawingMode={drawingMode}
+              />
+            )}
+            {polygons.map((polygon) => (
+              <Polygon
+                key={polygon.id}
+                geometry={[polygon.coordinates]}
+                options={{
+                  fillColor: '#00FF00',
+                  strokeColor: '#0000FF',
+                  opacity: 0.5,
+                  strokeWidth: 3,
+                }}
+              />
+            ))}
+            <ZoomControl options={{ float: 'left' }} />
+          </Map>
+        </YMaps>
+        <Modal
+          isOpen={isOpenEditPoint}
+          onClose={() => setIsOpenEditPoint(false)}
+        >
+          <Editor
+            onSubmit={(data) => {
+              if (editingPoint) {
+                setPoints(
+                  points.map((p) =>
+                    p.id === editingPoint.id ? { ...p, ...data } : p
+                  )
                 )
-              )
-            } else {
-              setPoints([...points, { ...data, id: Date.now().toString() }])
-            }
-            handleCloseModal()
-          }}
-          onClose={handleCloseModal}
-          initialData={editingPoint}
-        />
-      </Modal>
+              } else {
+                setPoints([...points, { ...data, id: Date.now().toString() }])
+              }
+              handleCloseModal()
+            }}
+            onClose={handleCloseModal}
+            initialData={editingPoint}
+          />
+        </Modal>
+      </div>
     </div>
   )
 }

@@ -41,8 +41,10 @@ export const PlaceMarkPoint: React.FC<IPlaceMarkPointProps> = ({
     }
 
     content.push(`
-      <button id="editButton_${id}" class="btn">Редактировать</button>
-      <button id="deleteButton_${id}" class="btn">Удалить</button>
+      <div class="row">
+        <button id="editButton_${id}" class="btn btn_edit">Редактировать</button>
+        <button id="deleteButton_${id}" class="btn btn_remove">Удалить</button>
+      </div>
     `)
 
     return `<div>${content.join('')}</div>`
