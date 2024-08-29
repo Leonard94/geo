@@ -15,8 +15,8 @@ export interface IPoint {
 }
 
 export enum EObjectType {
-  BPLA = 'bpla',
-  ROCKET = 'rocket',
+  BPLA = 'БПЛА',
+  ROCKET = 'Обстрел',
 }
 
 export interface IPlaceMarkPointProps {

@@ -137,8 +137,8 @@ export const Editor: React.FC<TProps> = ({
             setValue('objectType', e.target.value as EObjectType)
           }
         >
-          <MenuItem value={EObjectType.BPLA}>БПЛА</MenuItem>
-          <MenuItem value={EObjectType.ROCKET}>Ракета</MenuItem>
+          <MenuItem value={EObjectType.BPLA}>{EObjectType.BPLA}</MenuItem>
+          <MenuItem value={EObjectType.ROCKET}>{EObjectType.ROCKET}</MenuItem>
         </Select>
       </FormControl>
       <Button type='submit' variant='contained'>

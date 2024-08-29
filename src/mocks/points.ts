@@ -1,5 +1,3 @@
-import { EObjectType } from "../components/CustomMap/types";
-
 export const POINTS = [
   // {
   //   id: '1724698282956',
