@@ -88,6 +88,17 @@ export const CustomMap: React.FC = () => {
     setPoints(newPoints)
   }
 
+  const onSubmitEditor = (data: any) => {
+    if (editingPoint) {
+      setPoints(
+        points.map((p) => (p.id === editingPoint.id ? { ...p, ...data } : p))
+      )
+    } else {
+      setPoints([...points, { ...data, id: Date.now().toString() }])
+    }
+    handleCloseModal()
+  }
+
   return (
     <div className={styles.container}>
       <Header
@@ -171,18 +182,7 @@ export const CustomMap: React.FC = () => {
           onClose={() => setIsOpenEditPoint(false)}
         >
           <Editor
-            onSubmit={(data) => {
-              if (editingPoint) {
-                setPoints(
-                  points.map((p) =>
-                    p.id === editingPoint.id ? { ...p, ...data } : p
-                  )
-                )
-              } else {
-                setPoints([...points, { ...data, id: Date.now().toString() }])
-              }
-              handleCloseModal()
-            }}
+            onSubmit={onSubmitEditor}
             onClose={handleCloseModal}
             initialData={editingPoint}
           />
