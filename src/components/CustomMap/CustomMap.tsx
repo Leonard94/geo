@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { Map, Polygon, YMaps, ZoomControl } from 'react-yandex-maps'
+import { Map, YMaps, ZoomControl } from 'react-yandex-maps'
 import { PlaceMarkPoint } from '../PlaceMarkPoint/PlaceMarkPoint'
 import styles from './styles.module.scss'
 import { POINTS } from '../../mocks/points'
 import { mapSettings } from './mapSettings'
-import { IPolygon, IPoint, EDrawingMode, EObjectType } from './types'
-import { DrawPolygon } from '../DrawPolygon/DrawPolygon'
+import { IPoint, EObjectType } from './types'
 import { Modal } from '../ui/Modal/Modal'
 import { Editor } from './Editor/Editor'
 import { Header } from './Header/Header'
@@ -14,18 +13,12 @@ import { Box, CircularProgress } from '@mui/material'
 
 export const CustomMap: React.FC = () => {
   const apikey = import.meta.env.VITE_YANDEX_API_KEY || ''
-  const [ymaps, setYmaps] = useState<any>(null)
-  const [map, setMap] = useState<any>(null)
 
   const [points, setPoints] = useState<IPoint[]>(POINTS)
-  const [polygons, setPolygons] = useState<IPolygon[]>([])
   const [selectedLocation, setSelectedLocation] = useState<IPoint | null>(null)
   const [editingPoint, setEditingPoint] = useState<IPoint | null>(null)
   const [isShowLoading, setIsShowLoading] = useState(true)
   const [isOpenEditPoint, setIsOpenEditPoint] = useState(false)
-  const [drawingMode, setDrawingMode] = useState<EDrawingMode>(
-    EDrawingMode.POINT
-  )
 
   const deletePoint = (id: string) => {
     setPoints(points.filter((point) => point.id !== id))
@@ -33,10 +26,6 @@ export const CustomMap: React.FC = () => {
   }
 
   const onMapClick = (e: any) => {
-    if (drawingMode === 'polygon') {
-      return
-    }
-
     const coords = e.get('coords')
 
     const newPoint: IPoint = {
@@ -61,15 +50,6 @@ export const CustomMap: React.FC = () => {
   const onEdit = (point: IPoint) => {
     setEditingPoint(point)
     setIsOpenEditPoint(true)
-  }
-
-  const handlePolygonComplete = (coordinates: number[][]) => {
-    const newPolygon: IPolygon = {
-      id: Date.now().toString(),
-      coordinates: coordinates,
-    }
-    setPolygons([...polygons, newPolygon])
-    setDrawingMode(EDrawingMode.POINT)
   }
 
   const handleCloseModal = () => {
@@ -101,11 +81,7 @@ export const CustomMap: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Header
-        setDrawingMode={setDrawingMode}
-        drawingMode={drawingMode}
-        onPointsUpdate={onPointsUpdate}
-      />
+      <Header onPointsUpdate={onPointsUpdate} />
       <Sidebar
         onEdit={onEdit}
         pointsList={points}
@@ -126,8 +102,7 @@ export const CustomMap: React.FC = () => {
         )}
         <YMaps
           query={{ apikey, load: 'package.full' }}
-          onLoad={(ymapsInstance: any) => {
-            setYmaps(ymapsInstance)
+          onLoad={() => {
             setIsShowLoading(false)
           }}
         >
@@ -139,8 +114,7 @@ export const CustomMap: React.FC = () => {
             height='100%'
             options={mapSettings.options}
             state={mapSettings.state}
-            onLoad={(mapInstance) => {
-              setMap(mapInstance)
+            onLoad={() => {
               setIsShowLoading(false)
             }}
           >
@@ -154,26 +128,6 @@ export const CustomMap: React.FC = () => {
               deletePoint={deletePoint}
               onEdit={onEdit}
             />
-            {drawingMode === 'polygon' && (
-              <DrawPolygon
-                ymaps={ymaps}
-                map={map}
-                onPolygonComplete={handlePolygonComplete}
-                drawingMode={drawingMode}
-              />
-            )}
-            {polygons.map((polygon) => (
-              <Polygon
-                key={polygon.id}
-                geometry={[polygon.coordinates]}
-                options={{
-                  fillColor: '#00FF00',
-                  strokeColor: '#0000FF',
-                  opacity: 0.5,
-                  strokeWidth: 3,
-                }}
-              />
-            ))}
             <ZoomControl options={{ float: 'left' }} />
           </Map>
         </YMaps>
