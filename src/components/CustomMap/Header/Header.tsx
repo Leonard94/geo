@@ -16,7 +16,7 @@ export const Header: React.FC<TProps> = ({
   return (
     <header className='header'>
       <div>
-        <Button
+        {/* <Button
           color='inherit'
           onClick={() => setDrawingMode(EDrawingMode.POINT)}
           sx={{
@@ -24,8 +24,8 @@ export const Header: React.FC<TProps> = ({
           }}
         >
           Ставить точки
-        </Button>
-        <Button
+        </Button> */}
+        {/* <Button
           color='inherit'
           onClick={() => setDrawingMode(EDrawingMode.POLYGON)}
           sx={{
@@ -34,7 +34,7 @@ export const Header: React.FC<TProps> = ({
           }}
         >
           Рисовать полигон
-        </Button>
+        </Button> */}
       </div>
       <ExcelUploader onPointsUpdate={onPointsUpdate} />
     </header>
