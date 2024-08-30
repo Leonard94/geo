@@ -58,7 +58,7 @@ export const ExcelUploader: React.FC<ExcelUploaderProps> = ({
           title: row.getCell(2).value?.toString() || '',
           address: row.getCell(3).value?.toString() || '',
           comment: row.getCell(4).value?.toString() || '',
-          validity: row.getCell(5).value === true,
+          validity: ['да', 'Да', 'ДА'].includes(String(row.getCell(5).value)),
           objectType: row.getCell(6).value?.toString() as EObjectType,
           lat: Number(row.getCell(7).value) || 0,
           lon: Number(row.getCell(8).value) || 0,

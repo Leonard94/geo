@@ -137,8 +137,11 @@ export const Editor: React.FC<TProps> = ({
             setValue('objectType', e.target.value as EObjectType)
           }
         >
-          <MenuItem value={EObjectType.BPLA}>{EObjectType.BPLA}</MenuItem>
-          <MenuItem value={EObjectType.ROCKET}>{EObjectType.ROCKET}</MenuItem>
+          {Object.values(EObjectType).map((type) => (
+            <MenuItem key={type} value={type}>
+              {type}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
       <Button type='submit' variant='contained'>
