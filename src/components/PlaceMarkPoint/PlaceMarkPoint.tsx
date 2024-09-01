@@ -5,6 +5,7 @@ import { EObjectType, IPlaceMarkPointProps, IPoint } from '../CustomMap/types'
 const POINT_COLORS = {
   [EObjectType.BPLA]: '#e50000',
   [EObjectType.ROCKET]: '#1f00e5',
+  [EObjectType.ObPAO]: '#90ee90',
   default: '#1e98ff',
 }
 

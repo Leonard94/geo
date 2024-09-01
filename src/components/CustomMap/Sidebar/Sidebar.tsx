@@ -14,6 +14,7 @@ export const Sidebar: React.FC<TProps> = ({
   handleOpenNewPointModal,
   onEdit,
 }) => {
+  return <div className='sidebar'></div>
   return (
     <div className='sidebar'>
       <ul className={styles.points_container}>
