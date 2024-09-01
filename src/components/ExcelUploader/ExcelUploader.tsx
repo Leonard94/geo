@@ -67,7 +67,21 @@ export const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         newPoints.push(point)
       })
 
-      onPointsUpdate(newPoints)
+      const mergedPoints: { [key: string]: Point } = {}
+
+      newPoints.forEach((point) => {
+        const key = `${point.lat}-${point.lon}`
+        if (mergedPoints[key]) {
+          mergedPoints[key].title += `, ${point.title}`
+          mergedPoints[key].id += `, ${point.id}`
+        } else {
+          mergedPoints[key] = point
+        }
+      })
+
+      const finalPoints = Object.values(mergedPoints)
+
+      onPointsUpdate(finalPoints)
       setError('')
     } catch (err) {
       setError('Ошибка при обработке файла: ' + (err as Error).message)
