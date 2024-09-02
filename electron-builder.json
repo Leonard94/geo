@@ -1,0 +1,24 @@
+{
+  "appId": "com.example.app",
+  "productName": "Geo Sber",
+  "files": [
+    "dist/**/*",
+    "main.js",
+    "preload.js"
+  ],
+  "directories": {
+    "buildResources": "assets"
+  },
+  "win": {
+    "target": [
+      "nsis",
+      "msi"
+    ]
+  },
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "deb"
+  }
+}
