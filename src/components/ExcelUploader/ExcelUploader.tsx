@@ -23,6 +23,7 @@ export const ExcelUploader: React.FC<ExcelUploaderProps> = ({
 }) => {
   const [fileName, setFileName] = useState<string>('')
   const [error, setError] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -34,6 +35,7 @@ export const ExcelUploader: React.FC<ExcelUploaderProps> = ({
     }
 
     setFileName(file.name)
+    setIsLoading(true)
     setError('')
 
     try {
@@ -45,6 +47,8 @@ export const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         setError('Лист не найден в файле Excel')
         return
       }
+
+      console.time('handleFileUpload')
 
       const newPoints: Point[] = []
 
@@ -67,25 +71,48 @@ export const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         newPoints.push(point)
       })
 
-      const mergedPoints: { [key: string]: Point } = {}
-
-      newPoints.forEach((point) => {
-        const key = `${point.lat}-${point.lon}`
-        if (mergedPoints[key]) {
-          mergedPoints[key].title += `, ${point.title}`
-          mergedPoints[key].id += `, ${point.id}`
+      newPoints.sort((a, b) => {
+        if (a.lon !== b.lon) {
+          return a.lon - b.lon
         } else {
-          mergedPoints[key] = point
+          return a.lat - b.lat
         }
       })
 
-      const finalPoints = Object.values(mergedPoints)
+      newPoints.forEach((point, index) => {
+        if (!newPoints[index + 1]) {
+          return
+        }
 
-      onPointsUpdate(finalPoints)
+        if (point.lon !== newPoints[index + 1].lon) {
+          return
+        }
+
+        if (point.lat !== newPoints[index + 1].lat) {
+          return
+        }
+
+        const newTitle = point.title + ', ' + newPoints[index + 1].title
+        const newId = point.id + ', ' + newPoints[index + 1].id
+
+        newPoints[index + 1].title = newTitle
+        newPoints[index + 1].id = newId
+
+        return null
+      })
+
+      onPointsUpdate(newPoints)
       setError('')
     } catch (err) {
       setError('Ошибка при обработке файла: ' + (err as Error).message)
+    } finally {
+      setIsLoading(false)
+      console.timeEnd('handleFileUpload')
     }
+  }
+
+  if (isLoading) {
+    return <div>Загрузка...</div>
   }
 
   return (
