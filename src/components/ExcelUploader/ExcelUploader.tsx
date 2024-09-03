@@ -3,7 +3,6 @@ import * as XLSX from 'exceljs'
 import { EObjectType, IPoint } from '../CustomMap/types'
 import { Button } from '@mui/material'
 
-
 interface ExcelUploaderProps {
   onPointsUpdate: (points: IPoint[]) => void
 }

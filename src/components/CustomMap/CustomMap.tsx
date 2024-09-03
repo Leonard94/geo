@@ -108,7 +108,7 @@ export const CustomMap: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Header onPointsUpdate={onPointsUpdate} />
+      <Header onPointsUpdate={onPointsUpdate} pointsList={points} />
       <Sidebar
         onEdit={onEdit}
         pointsList={points}
