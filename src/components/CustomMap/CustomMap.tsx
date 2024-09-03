@@ -17,8 +17,13 @@ export const CustomMap: React.FC = () => {
   const [editingPoint, setEditingPoint] = useState<IPoint | null>(null)
   const [isShowLoading, setIsShowLoading] = useState(true)
   const [isOpenEditPoint, setIsOpenEditPoint] = useState(false)
+  const [isPointModeActive, setIsPointModeActive] = useState(false)
 
   const onMapClick = (e: any) => {
+    if (!isPointModeActive) {
+      return
+    }
+    
     const coords = e.get('coords')
 
     const newPoint: IPoint = {
@@ -108,7 +113,12 @@ export const CustomMap: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Header onPointsUpdate={onPointsUpdate} pointsList={points} />
+      <Header
+        onPointsUpdate={onPointsUpdate}
+        pointsList={points}
+        isPointModeActive={isPointModeActive}
+        onTogglePointMode={() => setIsPointModeActive(!isPointModeActive)}
+      />
       <Sidebar
         onEdit={onEdit}
         pointsList={points}
