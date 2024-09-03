@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { Map, YMaps, ZoomControl } from 'react-yandex-maps'
-import { PlaceMarkPoint } from '../PlaceMarkPoint/PlaceMarkPoint'
+import { Map, YMaps, ZoomControl, ObjectManager } from 'react-yandex-maps'
 import styles from './styles.module.scss'
 import { POINTS } from '../../mocks/points'
 import { mapSettings } from './mapSettings'
@@ -14,37 +13,35 @@ import { Box, CircularProgress } from '@mui/material'
 export const CustomMap: React.FC = () => {
   const apikey = import.meta.env.VITE_YANDEX_API_KEY || ''
 
-  const [points, setPoints] = useState<IPoint[]>(POINTS)
-  const [selectedLocation, setSelectedLocation] = useState<IPoint | null>(null)
+  const [points, setPoints] = useState<any[]>(POINTS)
   const [editingPoint, setEditingPoint] = useState<IPoint | null>(null)
   const [isShowLoading, setIsShowLoading] = useState(true)
   const [isOpenEditPoint, setIsOpenEditPoint] = useState(false)
-
-  const deletePoint = (id: string) => {
-    setPoints(points.filter((point) => point.id !== id))
-    setSelectedLocation(null)
-  }
 
   const onMapClick = (e: any) => {
     const coords = e.get('coords')
 
     const newPoint: IPoint = {
       id: Date.now().toString(),
-      lat: coords[0],
-      lon: coords[1],
       title: 'Новая точка',
       validity: true,
-      address: '', // Нужно уметь автоматически устанавливать адресс через геокодер
+      address: '',
       comment: '',
       objectType: EObjectType.BPLA,
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [coords[0], coords[1]],
+      },
+      properties: {
+        balloonContentHeader: 'Новая точка',
+        balloonContentBody: 'Адрес: не указан<br>Комментарий: не указан',
+        // balloonContentFooter:
+        //   '<button onclick="onEdit()">Редактировать</button>',
+        clusterCaption: 'Новая точка',
+      },
     }
     setPoints([...points, newPoint])
-  }
-
-  const updatePoint = (id: string, lat: number, lon: number) => {
-    setPoints(
-      points.map((point) => (point.id === id ? { ...point, lat, lon } : point))
-    )
   }
 
   const onEdit = (point: IPoint) => {
@@ -55,12 +52,10 @@ export const CustomMap: React.FC = () => {
   const handleCloseModal = () => {
     setIsOpenEditPoint(false)
     setEditingPoint(null)
-    setSelectedLocation(null)
   }
 
   const handleOpenNewPointModal = () => {
     setEditingPoint(null)
-    setSelectedLocation(null)
     setIsOpenEditPoint(true)
   }
 
@@ -71,10 +66,42 @@ export const CustomMap: React.FC = () => {
   const onSubmitEditor = (data: any) => {
     if (editingPoint) {
       setPoints(
-        points.map((p) => (p.id === editingPoint.id ? { ...p, ...data } : p))
+        points.map((p) => {
+          if (p.id === editingPoint.id) {
+            return {
+              ...p,
+              ...data,
+              properties: {
+                ...p.properties,
+                balloonContentHeader: data.title,
+                balloonContentBody: `Адрес: ${data.address}<br>Комментарий: ${data.comment}`,
+              },
+            }
+          }
+          return p
+        })
       )
     } else {
-      setPoints([...points, { ...data, id: Date.now().toString() }])
+      const newPoint = {
+        ...data,
+        id: Date.now().toString(),
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [
+            data.geometry.coordinates[0],
+            data.geometry.coordinates[1],
+          ],
+        },
+        properties: {
+          balloonContentHeader: data.title,
+          balloonContentBody: `Адрес: ${data.address}<br>Комментарий: ${data.comment}`,
+          // balloonContentFooter:
+          //   '<button onclick="editPoint()">Редактировать</button>',
+          clusterCaption: data.title,
+        },
+      }
+      setPoints([...points, newPoint])
     }
     handleCloseModal()
   }
@@ -118,15 +145,36 @@ export const CustomMap: React.FC = () => {
               setIsShowLoading(false)
             }}
           >
-            <PlaceMarkPoint
-              locations={points}
-              selectedLocation={selectedLocation}
-              setSelectedLocation={setSelectedLocation}
-              updatePoint={updatePoint}
-              editingPoint={editingPoint}
-              setEditingPoint={setEditingPoint}
-              deletePoint={deletePoint}
-              onEdit={onEdit}
+            <ObjectManager
+              options={{
+                clusterize: true,
+                gridSize: 32,
+                clusterDisableClickZoom: true,
+              }}
+              objects={{
+                openBalloonOnClick: true,
+                preset: 'islands#greenDotIcon',
+              }}
+              clusters={{
+                preset: 'islands#redClusterIcons',
+              }}
+              features={points}
+              modules={[
+                'objectManager.addon.objectsBalloon',
+                'objectManager.addon.objectsHint',
+              ]}
+              instanceRef={(ref: any) => {
+                if (ref) {
+                  ref.objects.options.set('preset', 'islands#greenDotIcon')
+                  ref.objects.events.add('click', (e: any) => {
+                    const objectId = e.get('objectId')
+                    const point = points.find((p) => p.id === objectId)
+                    if (point) {
+                      // setSelectedLocation(point)
+                    }
+                  })
+                }
+              }}
             />
             <ZoomControl options={{ float: 'left' }} />
           </Map>
