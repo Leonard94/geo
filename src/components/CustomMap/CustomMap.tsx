@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Map, YMaps, ZoomControl, ObjectManager } from 'react-yandex-maps'
 import styles from './styles.module.scss'
-import { POINTS } from '../../mocks/points'
 import { mapSettings } from './mapSettings'
 import { IPoint, EObjectType } from './types'
 import { Modal } from '../ui/Modal/Modal'
@@ -13,7 +12,9 @@ import { Box, CircularProgress } from '@mui/material'
 export const CustomMap: React.FC = () => {
   const apikey = import.meta.env.VITE_YANDEX_API_KEY || ''
 
-  const [points, setPoints] = useState<any[]>(POINTS)
+  const [points, setPoints] = useState<IPoint[]>([])
+  const [isFilteredMode, setIsFilteredMode] = useState(false)
+  const [filteredPoints, setFilteredPoints] = useState<IPoint[]>([])
   const [editingPoint, setEditingPoint] = useState<IPoint | null>(null)
   const [isShowLoading, setIsShowLoading] = useState(true)
   const [isOpenEditPoint, setIsOpenEditPoint] = useState(false)
@@ -23,7 +24,7 @@ export const CustomMap: React.FC = () => {
     if (!isPointModeActive) {
       return
     }
-    
+
     const coords = e.get('coords')
 
     const newPoint: IPoint = {
@@ -71,19 +72,19 @@ export const CustomMap: React.FC = () => {
   const onSubmitEditor = (data: any) => {
     if (editingPoint) {
       setPoints(
-        points.map((p) => {
-          if (p.id === editingPoint.id) {
+        points.map((item) => {
+          if (item.id === editingPoint.id) {
             return {
-              ...p,
+              ...item,
               ...data,
               properties: {
-                ...p.properties,
+                ...item.properties,
                 balloonContentHeader: data.title,
                 balloonContentBody: `Адрес: ${data.address}<br>Комментарий: ${data.comment}`,
               },
             }
           }
-          return p
+          return item
         })
       )
     } else {
@@ -111,18 +112,21 @@ export const CustomMap: React.FC = () => {
     handleCloseModal()
   }
 
+  const displayedPoints = isFilteredMode ? filteredPoints : points
+
   return (
     <div className={styles.container}>
-      <Header
-        onPointsUpdate={onPointsUpdate}
-        pointsList={points}
-        isPointModeActive={isPointModeActive}
-        onTogglePointMode={() => setIsPointModeActive(!isPointModeActive)}
-      />
+      <Header onPointsUpdate={onPointsUpdate} pointsList={displayedPoints} />
       <Sidebar
         onEdit={onEdit}
         pointsList={points}
+        setPoints={setPoints}
+        isFilteredMode={isFilteredMode}
+        setFilteredPoints={setFilteredPoints}
         handleOpenNewPointModal={handleOpenNewPointModal}
+        setIsFilteredMode={setIsFilteredMode}
+        onTogglePointMode={() => setIsPointModeActive(!isPointModeActive)}
+        isPointModeActive={isPointModeActive}
       />
       <div className={styles.content}>
         {isShowLoading && (
@@ -168,7 +172,7 @@ export const CustomMap: React.FC = () => {
               clusters={{
                 preset: 'islands#redClusterIcons',
               }}
-              features={points}
+              features={displayedPoints}
               modules={[
                 'objectManager.addon.objectsBalloon',
                 'objectManager.addon.objectsHint',

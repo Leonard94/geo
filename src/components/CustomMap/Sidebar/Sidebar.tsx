@@ -1,36 +1,69 @@
-import { EditIcon } from '../../../icons'
+import { useEffect } from 'react'
 import { IPoint } from '../types'
-import styles from './styles.module.scss'
 import { Button } from '@mui/material'
+import { Switch, FormControlLabel } from '@mui/material'
 
 type TProps = {
   pointsList: IPoint[]
+  isPointModeActive: boolean
+  isFilteredMode: boolean
   handleOpenNewPointModal: () => void
   onEdit: (point: IPoint) => void
+  setPoints: (points: IPoint[]) => void
+  setFilteredPoints: (filteredPoints: IPoint[]) => void
+  setIsFilteredMode: (newCondition: boolean) => void
+  onTogglePointMode: () => void
 }
 
 export const Sidebar: React.FC<TProps> = ({
   pointsList,
   handleOpenNewPointModal,
-  onEdit,
+  onTogglePointMode,
+  isPointModeActive,
+  isFilteredMode,
+  setFilteredPoints,
+  setIsFilteredMode,
 }) => {
-  return <div className='sidebar'></div>
+  const handleToggleFilter = () => {
+    if (isFilteredMode) {
+      setFilteredPoints([])
+      setIsFilteredMode(false)
+      return
+    }
+    setIsFilteredMode(true)
+    const onlyValidPoints = pointsList.filter((item) => item.validity)
+    setFilteredPoints(onlyValidPoints)
+  }
+
+  useEffect(() => {
+    if (isFilteredMode) {
+      const onlyValidPoints = pointsList.filter((item) => item.validity)
+      setFilteredPoints(onlyValidPoints)
+    }
+  }, [pointsList])
+
   return (
     <div className='sidebar'>
-      <ul className={styles.points_container}>
-        {pointsList.length === 0 ? (
-          <span>Вы еще не добавили точки</span>
-        ) : (
-          pointsList.map((point) => (
-            <li key={point.id} onClick={() => onEdit(point)}>
-              <div>{point.title}</div>
-              <div className={styles.icon}>
-                <EditIcon />
-              </div>
-            </li>
-          ))
-        )}
-      </ul>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={isPointModeActive}
+            onChange={onTogglePointMode}
+            color='primary'
+          />
+        }
+        label='Режим нанесения точек'
+      />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={isFilteredMode}
+            onChange={handleToggleFilter}
+            color='primary'
+          />
+        }
+        label='Оставить только актуальные'
+      />
       <Button
         color='inherit'
         onClick={handleOpenNewPointModal}
