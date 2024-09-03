@@ -1,27 +1,9 @@
-.points_container {
-  font-size: 10px;
-  padding: 0 10px 10px 5px;
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-  li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    line-height: 140%;
-    color: rgb(186, 186, 186);
-    margin-bottom: 10px;
-    cursor: pointer;
-
-    svg {
-      cursor: pointer;
-      stroke: rgb(186, 186, 186);
-    }
-
-    &:hover {
-      color: white;
-
-      svg {
-        stroke: white;
-      }
-    }
-  }
+.label {
+  font-size: 12px !important;
 }
