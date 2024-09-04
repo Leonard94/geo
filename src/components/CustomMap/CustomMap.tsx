@@ -9,6 +9,16 @@ import { Header } from './Header/Header'
 import { Sidebar } from './Sidebar/Sidebar'
 import { Box, CircularProgress } from '@mui/material'
 
+const typeColors = {
+  [EObjectType.BPLA]: '#F06500',
+  [EObjectType.ROCKET]: '#4462FF',
+  [EObjectType.ObPAO]: '#00CE2D',
+}
+
+const getPointColor = (objectType: EObjectType) => {
+  return typeColors[objectType] || '#GRAY'
+}
+
 export const CustomMap: React.FC = () => {
   const apikey = import.meta.env.VITE_YANDEX_API_KEY || ''
 
@@ -196,12 +206,18 @@ export const CustomMap: React.FC = () => {
               }}
               objects={{
                 openBalloonOnClick: true,
-                preset: 'islands#greenDotIcon',
               }}
               clusters={{
-                preset: 'islands#redClusterIcons',
+                preset: 'islands#greyClusterIcons',
               }}
-              features={displayedPoints}
+              // features={displayedPoints}
+              // ! FIX ME: лучше задавать цвет на этапе формирования. 
+              features={displayedPoints.map((point) => ({
+                ...point,
+                options: {
+                  iconColor: getPointColor(point.objectType),
+                },
+              }))}
               modules={[
                 'objectManager.addon.objectsBalloon',
                 'objectManager.addon.objectsHint',
