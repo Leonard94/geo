@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Map, YMaps, ZoomControl, ObjectManager } from 'react-yandex-maps'
 import styles from './styles.module.scss'
 import { mapSettings } from './mapSettings'
@@ -19,6 +19,8 @@ export const CustomMap: React.FC = () => {
   const [isShowLoading, setIsShowLoading] = useState(true)
   const [isOpenEditPoint, setIsOpenEditPoint] = useState(false)
   const [isPointModeActive, setIsPointModeActive] = useState(false)
+
+  const objectManagerRef = useRef<any>(null)
 
   const onMapClick = (e: any) => {
     if (!isPointModeActive) {
@@ -42,8 +44,7 @@ export const CustomMap: React.FC = () => {
       properties: {
         balloonContentHeader: 'Новая точка',
         balloonContentBody: 'Адрес: не указан<br>Комментарий: не указан',
-        // balloonContentFooter:
-        //   '<button onclick="onEdit()">Редактировать</button>',
+        balloonContentFooter: '',
         clusterCaption: 'Новая точка',
       },
     }
@@ -67,6 +68,33 @@ export const CustomMap: React.FC = () => {
 
   const onPointsUpdate = (newPoints: IPoint[]) => {
     setPoints(newPoints)
+  }
+
+  const onDelete = (pointId: string) => {
+    setPoints((prevPoints) =>
+      prevPoints.filter((point) => point.id !== pointId)
+    )
+    setFilteredPoints((prevFilteredPoints) =>
+      prevFilteredPoints.filter((point) => point.id !== pointId)
+    )
+  }
+
+  const handleBalloonEvent = (e: any) => {
+    const target = e.target as HTMLElement
+    if (!target || !target.id) return
+
+    const [action, id] = target.id.split('_')
+    const point = points.find((p) => p.id === id)
+
+    if (!point) return
+
+    if (action === 'editButton') {
+      onEdit(point)
+    } else if (action === 'deleteButton') {
+      onDelete(point.id)
+    }
+
+    objectManagerRef.current?.objects.balloon.close()
   }
 
   const onSubmitEditor = (data: any) => {
@@ -128,6 +156,7 @@ export const CustomMap: React.FC = () => {
         onTogglePointMode={() => setIsPointModeActive(!isPointModeActive)}
         isPointModeActive={isPointModeActive}
       />
+
       <div className={styles.content}>
         {isShowLoading && (
           <Box
@@ -179,13 +208,20 @@ export const CustomMap: React.FC = () => {
               ]}
               instanceRef={(ref: any) => {
                 if (ref) {
+                  objectManagerRef.current = ref
                   ref.objects.options.set('preset', 'islands#greenDotIcon')
                   ref.objects.events.add('click', (e: any) => {
                     const objectId = e.get('objectId')
                     const point = points.find((p) => p.id === objectId)
                     if (point) {
-                      // setSelectedLocation(point)
+                      // Дополнительные действия при клике на точку, если необходимо
                     }
+                  })
+                  ref.events.add('balloonopen', () => {
+                    document.addEventListener('click', handleBalloonEvent)
+                  })
+                  ref.events.add('balloonclose', () => {
+                    document.removeEventListener('click', handleBalloonEvent)
                   })
                 }
               }}

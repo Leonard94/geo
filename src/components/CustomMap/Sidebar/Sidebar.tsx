@@ -55,7 +55,7 @@ export const Sidebar: React.FC<TProps> = ({
             />
           }
           label='Режим нанесения точек'
-          classes={{ label: styles.label }} 
+          classes={{ label: styles.label }}
         />
         <FormControlLabel
           control={
@@ -66,7 +66,7 @@ export const Sidebar: React.FC<TProps> = ({
             />
           }
           label='Оставить только актуальные'
-          classes={{ label: styles.label }} 
+          classes={{ label: styles.label }}
         />
         <Button
           color='inherit'

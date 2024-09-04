@@ -3,17 +3,6 @@ export interface IPolygon {
   coordinates: number[][]
 }
 
-// export type IPoint = any
-// export interface IPoint {
-//   id: string
-//   lat: number
-//   lon: number
-//   title: string
-//   address: string
-//   comment: string
-//   validity: boolean
-//   objectType: EObjectType
-// }
 export interface IPoint {
   type: 'Feature'
   id: string

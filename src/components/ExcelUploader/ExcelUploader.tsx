@@ -9,7 +9,7 @@ interface ExcelUploaderProps {
 
 const createBalloonContent = (point: IPoint) => {
   const content = []
-  const { title, address, comment, objectType, validity } = point
+  const { id, title, address, comment, objectType, validity } = point
 
   if (title) {
     content.push(`<b>${title}</b>`)
@@ -29,6 +29,11 @@ const createBalloonContent = (point: IPoint) => {
     )
   }
 
+  content.push(`
+    <div class="row">
+      <button id="deleteButton_${id}" class="btn btn_remove">Удалить</button>
+    </div>
+  `)
   // content.push(`
   //   <div class="row">
   //     <button id="editButton_${id}" class="btn btn_edit">Редактировать</button>
