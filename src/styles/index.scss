@@ -1,11 +1,12 @@
 @import './reset.scss';
+@import '../assets/fonts/fonts.scss';
 
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'roboto';
+  font-family: 'Inter' !important;
 }
 
 .header {
@@ -52,7 +53,7 @@ body {
     }
 
     &_remove {
-      background: red;
+      background: rgba(255, 71, 71, 0.88);
     }
 
     &:hover {

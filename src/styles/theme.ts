@@ -6,7 +6,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
-          fontFamily: 'roboto',
+          fontFamily: 'Inter',
           fontSize: '12px'
         },
       },

@@ -10,8 +10,8 @@ import { Sidebar } from './Sidebar/Sidebar'
 import { Box, CircularProgress } from '@mui/material'
 
 const typeColors = {
-  [EObjectType.BPLA]: '#F06500',
-  [EObjectType.ROCKET]: '#4462FF',
+  [EObjectType.BPLA]: '#4462FF',
+  [EObjectType.ROCKET]: '#F06500',
   [EObjectType.ObPAO]: '#00CE2D',
 }
 
@@ -210,8 +210,8 @@ export const CustomMap: React.FC = () => {
               clusters={{
                 preset: 'islands#greyClusterIcons',
               }}
+              // ! FIX ME: лучше задавать цвет на этапе формирования.
               // features={displayedPoints}
-              // ! FIX ME: лучше задавать цвет на этапе формирования. 
               features={displayedPoints.map((point) => ({
                 ...point,
                 options: {
